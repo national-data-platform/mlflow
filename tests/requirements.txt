@@ -1,0 +1,4 @@
+boto3
+spacy
+mlflow==2.8.1
+python-dotenv==1.0.0
