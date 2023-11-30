@@ -45,18 +45,17 @@ services:
       context: core
       dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - ${MLFLOW_PORT}:${MLFLOW_PORT}
     depends_on:
       - minio
       - db
     environment:
-      - MLFLOW_HOME
-      - ARTIFACT_STORE
       - GUNICORN_CMD_ARGS
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - AWS_BUCKET_NAME
       - MLFLOW_S3_ENDPOINT_URL
+      - MLFLOW_PORT
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
