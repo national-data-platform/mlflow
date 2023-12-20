@@ -6,5 +6,4 @@ mlflow server \
     --host 0.0.0.0 \
     --port ${MLFLOW_PORT} \
     --backend-store-uri ${MLFLOW_FILE_STORE} \
-    --default-artifact-root ${MLFLOW_ARTIFACT_STORE} \
-    --app-name ndp_mlflow_auth
+    --default-artifact-root ${MLFLOW_ARTIFACT_STORE}
