@@ -16,8 +16,8 @@ jobs:
         run: docker compose build
       - name: Run svcs
         run: docker compose up -d
-#      - name: watch svcs logs
-#        run: docker compose logs -f -t
+      - name: watch svcs logs
+        run: docker compose logs -f -t
       - name: Wait for svcs
         run: while [ $(curl -LI http://localhost:5000 -o /dev/null -w '%{http_code}\n' -s) != "500" ] ; do echo $(curl -LI http://localhost:5000 -o /dev/null -w '%{http_code}\n' -s) ; sleep 2 ; done
       - name: Install requirements
