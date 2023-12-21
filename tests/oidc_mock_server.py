@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from socketserver import ThreadingMixIn
 
-host = "localhost"
+host = "0.0.0.0"
 port = 5004
 
 response = {
