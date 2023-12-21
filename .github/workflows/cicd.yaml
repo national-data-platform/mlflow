@@ -17,7 +17,7 @@ jobs:
       - name: Run svcs
         run: docker compose up -d
       - name: Wait for svcs
-        run: while [ $(curl -LI http://localhost:5000 -o /dev/null -w '%{http_code}\n' -s) != "200" ] ; do echo waiting... ; sleep 2 ; done
+        run: while [ $(curl -LI http://localhost:5000 -u "admin:password" -o /dev/null -w '%{http_code}\n' -s) != "200" ] ; do echo waiting... ; sleep 2 ; done
       - name: Install requirements
         run: pip3 install -r tests/requirements.txt
       - name: Run tests
