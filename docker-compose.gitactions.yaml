@@ -1,0 +1,81 @@
+version: '3.7'
+
+services:
+  fake-keycloak:
+    build:
+      context: tests
+      dockerfile: Dockerfile
+    ports:
+      - 5004:5004
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2023-11-20T22-40-07Z
+    ports:
+      - 9000:9000
+      - 9090:9090
+    environment:
+      - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
+    command: server /data --console-address ':9090'
+    volumes:
+      - miniodata:/data
+
+  create-s3-buckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set minio http://minio:9000 '${AWS_ACCESS_KEY_ID}' '${AWS_SECRET_ACCESS_KEY}') do echo '...waiting...' && sleep 1; done;
+      /usr/bin/mc mb minio/mlflow;
+      exit 0;
+      "
+
+  db:
+    image: postgres:alpine3.15
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}"]
+      timeout: 20s
+      retries: 10
+
+  core:
+    build:
+      context: core
+      dockerfile: Dockerfile
+    ports:
+      - ${MLFLOW_PORT}:${MLFLOW_PORT}
+    depends_on:
+      - minio
+      - db
+      - fake-keycloak
+    environment:
+      - GUNICORN_CMD_ARGS
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_BUCKET_NAME
+      - MLFLOW_S3_ENDPOINT_URL
+      - MLFLOW_PORT
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - KEYCLOAK_ISSUER
+      - MLFLOW_FLASK_SECRET_KEY
+      - MLFLOW_HOST
+      - MLFLOW_KEYCLOAK_CLIENT_ID
+      - MLFLOW_KEYCLOAK_CLIENT_SECRET
+      - MLFLOW_DEFAULT_PASSWORD
+      - MLFLOW_TRACKING_USERNAME
+      - MLFLOW_TRACKING_PASSWORD
+
+volumes:
+  miniodata:
+  pgdata:
