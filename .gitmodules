@@ -1,0 +1,3 @@
+[submodule "mlflow-oidc-auth"]
+	path = mlflow-oidc-auth
+	url = https://github.com/national-data-platform/mlflow-oidc-auth

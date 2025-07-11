@@ -59,14 +59,25 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
-      - KEYCLOAK_ISSUER
       - MLFLOW_FLASK_SECRET_KEY
       - MLFLOW_HOST
-      - MLFLOW_KEYCLOAK_CLIENT_ID
-      - MLFLOW_KEYCLOAK_CLIENT_SECRET
-      - MLFLOW_DEFAULT_PASSWORD
       - MLFLOW_TRACKING_USERNAME
       - MLFLOW_TRACKING_PASSWORD
+      - OIDC_DISCOVERY_URL
+      - OIDC_REDIRECT_URI
+      - OIDC_CLIENT_SECRET
+      - OIDC_CLIENT_ID
+      - OIDC_PROVIDER_DISPLAY_NAME
+      - OIDC_SCOPE
+      - OIDC_GROUP_NAME
+      - LOG_LEVEL
+      - DEFAULT_MLFLOW_PERMISSION
+      - AUTOMATIC_LOGIN_REDIRECT
+      - USE_UI_ADDON
+    volumes:
+      - ./mlflow-oidc-auth:/mlflow-oidc-auth
+    entrypoint: >
+      sh -c "pip install --no-cache-dir -e /mlflow-oidc-auth && ./run.sh"
 
 volumes:
   miniodata:
